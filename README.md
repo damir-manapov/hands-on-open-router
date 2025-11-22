@@ -34,6 +34,9 @@ tsx examples/18-chain-of-thought.ts
 tsx examples/19-prompt-templates.ts
 tsx examples/20-retry-logic.ts
 tsx examples/21-context-management.ts
+tsx examples/22-response-validation.ts
+tsx examples/23-prompt-chaining.ts
+tsx examples/24-conditional-logic.ts
 ```
 
 ## Examples
@@ -423,6 +426,64 @@ function truncateConversation(messages: Message[], maxMessages: number): Message
   const otherMessages = messages.filter((m) => m.role !== 'system');
   const recentMessages = otherMessages.slice(-maxMessages);
   return systemMessage ? [systemMessage, ...recentMessages] : recentMessages;
+}
+```
+
+### Example 22: Response Validation
+
+```bash
+tsx examples/22-response-validation.ts
+```
+
+Validate LLM outputs before using them (email format, JSON, length, etc.).
+
+```typescript
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+const response = await client.complete('Generate an email address');
+if (validateEmail(response.trim())) {
+  console.log('Valid email:', response);
+} else {
+  console.error('Invalid email format');
+}
+```
+
+### Example 23: Prompt Chaining
+
+```bash
+tsx examples/23-prompt-chaining.ts
+```
+
+Use one LLM response as input to another for multi-step workflows.
+
+```typescript
+// Step 1: Generate ideas
+const ideas = await client.complete('Generate 3 product ideas');
+// Step 2: Evaluate ideas
+const evaluation = await client.chat([
+  { role: 'system', content: 'Evaluate product ideas' },
+  { role: 'user', content: `Evaluate these ideas:\n${ideas}` },
+]);
+```
+
+### Example 24: Conditional Logic
+
+```bash
+tsx examples/24-conditional-logic.ts
+```
+
+Use LLM responses to make decisions and route to different handlers.
+
+```typescript
+const intent = await client.complete(
+  `Classify intent: "${userQuery}"\nOptions: weather, search, chat`
+);
+if (intent.toLowerCase().includes('weather')) {
+  // Handle weather query
+} else if (intent.toLowerCase().includes('search')) {
+  // Handle search query
 }
 ```
 
