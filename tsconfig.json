@@ -31,6 +31,6 @@
     "sourceMap": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*", "test/**/*", "*.config.ts", "*.config.js"],
+  "include": ["src/**/*", "test/**/*", "*.config.ts", "*.config.js", "examples/**/*"],
   "exclude": ["node_modules", "dist"]
 }
