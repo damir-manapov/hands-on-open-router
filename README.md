@@ -37,6 +37,7 @@ tsx examples/21-context-management.ts
 tsx examples/22-response-validation.ts
 tsx examples/23-prompt-chaining.ts
 tsx examples/24-conditional-logic.ts
+tsx examples/25-cost-tracking.ts
 ```
 
 ## Examples
@@ -485,6 +486,25 @@ if (intent.toLowerCase().includes('weather')) {
 } else if (intent.toLowerCase().includes('search')) {
   // Handle search query
 }
+```
+
+### Example 25: Cost Tracking
+
+```bash
+tsx examples/25-cost-tracking.ts
+```
+
+Track API usage and estimate costs based on token usage and model pricing.
+
+```typescript
+// Access usage information from OpenAI client response
+const response = await openaiClient.chat.completions.create({
+  model: 'openai/gpt-3.5-turbo',
+  messages: [{ role: 'user', content: 'Hello' }],
+});
+
+const usage = response.usage; // Contains prompt_tokens, completion_tokens, total_tokens
+const cost = calculateCost(model, usage.prompt_tokens, usage.completion_tokens);
 ```
 
 ## API Reference
