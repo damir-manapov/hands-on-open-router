@@ -26,6 +26,14 @@ tsx examples/10-structured-output.ts
 tsx examples/11-role-playing.ts
 tsx examples/12-code-generation.ts
 tsx examples/13-translation.ts
+tsx examples/14-few-shot-learning.ts
+tsx examples/15-summarization.ts
+tsx examples/16-qa-from-context.ts
+tsx examples/17-text-classification.ts
+tsx examples/18-chain-of-thought.ts
+tsx examples/19-prompt-templates.ts
+tsx examples/20-retry-logic.ts
+tsx examples/21-context-management.ts
 ```
 
 ## Examples
@@ -256,6 +264,166 @@ const response = await client.chat([
   { role: 'system', content: 'You are a professional translator.' },
   { role: 'user', content: 'Translate "Hello, how are you?" to Spanish, French, and German' },
 ]);
+```
+
+### Example 14: Few-Shot Learning
+
+```bash
+tsx examples/14-few-shot-learning.ts
+```
+
+Demonstrate learning from examples in the prompt.
+
+```typescript
+const response = await client.chat([
+  {
+    role: 'system',
+    content: 'You are a helpful assistant that learns from examples.',
+  },
+  {
+    role: 'user',
+    content:
+      'Example 1: "happy" -> positive\nExample 2: "sad" -> negative\nNow classify: "excited"',
+  },
+]);
+```
+
+### Example 15: Summarization
+
+```bash
+tsx examples/15-summarization.ts
+```
+
+Summarize long text into concise summaries.
+
+```typescript
+const response = await client.chat([
+  {
+    role: 'system',
+    content: 'You are an expert at summarizing text. Provide concise summaries.',
+  },
+  {
+    role: 'user',
+    content: `Summarize this article in 3 sentences:\n\n${longText}`,
+  },
+]);
+```
+
+### Example 16: Question Answering from Context
+
+```bash
+tsx examples/16-qa-from-context.ts
+```
+
+RAG-like pattern - answer questions using provided context.
+
+```typescript
+const response = await client.chat([
+  {
+    role: 'system',
+    content: 'Answer questions based only on the provided context.',
+  },
+  {
+    role: 'user',
+    content: `Context: ${context}\n\nQuestion: When was the Eiffel Tower built?`,
+  },
+]);
+```
+
+### Example 17: Text Classification
+
+```bash
+tsx examples/17-text-classification.ts
+```
+
+Classify text into categories like sentiment analysis.
+
+```typescript
+const response = await client.chat([
+  {
+    role: 'system',
+    content: 'Classify text sentiment as: positive, negative, or neutral.',
+  },
+  {
+    role: 'user',
+    content: 'Classify: "I love this product! It works perfectly."',
+  },
+]);
+```
+
+### Example 18: Chain of Thought Reasoning
+
+```bash
+tsx examples/18-chain-of-thought.ts
+```
+
+Prompt for step-by-step reasoning to solve problems.
+
+```typescript
+const response = await client.chat([
+  {
+    role: 'system',
+    content: 'Think step by step and show your reasoning.',
+  },
+  {
+    role: 'user',
+    content: 'If a train travels 60 mph for 2 hours, how far does it go?',
+  },
+]);
+```
+
+### Example 19: Prompt Templates
+
+```bash
+tsx examples/19-prompt-templates.ts
+```
+
+Show reusable prompt patterns and template functions.
+
+```typescript
+function createReviewPrompt(product: string, review: string): string {
+  return `Review this ${product} review: "${review}"\n\nExtract: rating, sentiment, key points`;
+}
+
+const response = await client.complete(createReviewPrompt('laptop', review));
+```
+
+### Example 20: Retry Logic
+
+```bash
+tsx examples/20-retry-logic.ts
+```
+
+Implement retry logic for failed requests with exponential backoff.
+
+```typescript
+async function completeWithRetry(prompt: string, maxRetries = 3): Promise<string> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await client.complete(prompt);
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+```
+
+### Example 21: Context Management
+
+```bash
+tsx examples/21-context-management.ts
+```
+
+Manage long conversations by truncating old messages to stay within context limits.
+
+```typescript
+function truncateConversation(messages: Message[], maxMessages: number): Message[] {
+  const systemMessage = messages.find((m) => m.role === 'system');
+  const otherMessages = messages.filter((m) => m.role !== 'system');
+  const recentMessages = otherMessages.slice(-maxMessages);
+  return systemMessage ? [systemMessage, ...recentMessages] : recentMessages;
+}
 ```
 
 ## API Reference
